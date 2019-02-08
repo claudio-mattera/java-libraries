@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title></title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+  </style>
+  <link rel="stylesheet" href="style.css">
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<h1 id="smap-for-java">sMAP for Java</h1>
+<p>This is a Java library to access data on an <a href="http://people.eecs.berkeley.edu/~stevedh/smap2/index.html">sMAP</a> server. Check the Javadoc and tests for more examples.</p>
+<p><a href="https://github.com/sdu-cfei/java-libraries/smap/" class="uri">https://github.com/sdu-cfei/java-libraries/smap/</a></p>
+<h2 id="query-objects">Query objects</h2>
+<p>Query objects can be used to construct queries to sMAP. They are semantically equivalent to the sMAP SQL-like query language (in facts, they are converted to such queries when executed).</p>
+<ul>
+<li>Datetime selector
+<ul>
+<li><em>in (start, end)</em>: returns all readings between dates <em>start</em> and <em>end</em>.</li>
+<li><em>before now</em>: returns all readings before the current date.</li>
+<li><em>before (end)</em>: returns all readings before date <em>end</em>.</li>
+<li><em>after (start)</em>: returns all readings after date <em>start</em>.</li>
+</ul></li>
+<li>limit <span class="math inline"><em>n</em></span> selector: limits the number of returned readings to <span class="math inline"><em>n</em></span>.</li>
+<li>streamlimit <span class="math inline"><em>m</em></span> selector: limits the number of returned streams to <span class="math inline"><em>m</em></span>.</li>
+<li>where <em>clause</em> selector: restricts the returned streams to the ones which satisfy <em>clause</em>.</li>
+</ul>
+<p>Datetimes <em>start</em> and <em>end</em> can be expressed in either local time (Java class <code>java.time.LocalDateTime</code>) or Unix timestamps in milliseconds (Java class <code>java.time.Instant</code>).</p>
+<p>Query objects support a list of where clauses that will be joined with <em>and</em> operator. In case it is necessary to join clauses with <em>or</em> operator, or with more complex logic (parenthesis, <em>or</em>, <em>not</em>...) it is possible to specify a <em>raw</em> clause, which will just be appended to the query.</p>
+<h3 id="examples">Examples</h3>
+<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java">LocalDateTime start = LocalDateTime.<span class="fu">of</span>(<span class="dv">2015</span>, Month.<span class="fu">MARCH</span>, <span class="dv">12</span>, <span class="dv">21</span>, <span class="dv">15</span>, <span class="dv">18</span>);
+LocalDateTime end = LocalDateTime.<span class="fu">of</span>(<span class="dv">2015</span>, Month.<span class="fu">MARCH</span>, <span class="dv">23</span>, <span class="dv">14</span>, <span class="dv">55</span>, <span class="dv">2</span>);
+<span class="bu">Query</span> query = <span class="bu">Query</span>.<span class="fu">in</span>(start, end)
+    .<span class="fu">setLimit</span>(<span class="dv">2000</span>)
+    .<span class="fu">setStreamLimit</span>(<span class="dv">12</span>)
+    .<span class="fu">whereIs</span>(<span class="st">&quot;Metadata/SourceName&quot;</span>, <span class="st">&quot;Some source name&quot;</span>)
+    .<span class="fu">whereIs</span>(<span class="st">&quot;Metadata/Description&quot;</span>, <span class="st">&quot;CO2 level&quot;</span>)
+    .<span class="fu">whereLike</span>(<span class="st">&quot;Metadata/RoomName&quot;</span>, <span class="st">&quot;ABC 123 %&quot;</span>);
+
+query.<span class="fu">toString</span>();
+<span class="co">// Returns &quot;select data in (&#39;2015-03-12 21:15:18&#39;, &#39;2015-03-23 14:55:02&#39;)</span>
+<span class="co">//          limit 2000 streamlimit 12 where</span>
+<span class="co">//          Metadata/SourceName = &#39;Some source name&#39; and</span>
+<span class="co">//          Metadata/Description = &#39;CO2 level&#39; and</span>
+<span class="co">//          Metadata/RoomName like &#39;ABC 123 %&#39;&quot;</span>
+<span class="co">// (without newlines)</span></code></pre></div>
+<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java">Instant end = LocalDateTime.<span class="fu">of</span>(<span class="dv">2015</span>, Month.<span class="fu">MARCH</span>, <span class="dv">23</span>, <span class="dv">14</span>, <span class="dv">55</span>, <span class="dv">2</span>)
+    .<span class="fu">toInstant</span>(ZoneOffset.<span class="fu">UTC</span>);
+<span class="bu">Query</span> query = <span class="bu">Query</span>.<span class="fu">before</span>(end)
+    .<span class="fu">setStreamLimit</span>(<span class="dv">12</span>)
+    .<span class="fu">whereRaw</span>(<span class="st">&quot;Metadata/SourceName = &#39;Some source name&#39; or Metadata/Path like &#39;/Some/Path/%&#39;&quot;</span>);
+
+query.<span class="fu">toString</span>();
+<span class="co">// Returns &quot;select data before 1427118902000</span>
+<span class="co">//          streamlimit 12 where</span>
+<span class="co">//          Metadata/SourceName = &#39;Some source name&#39; or</span>
+<span class="co">//          Metadata/Path like &#39;/Some/Path/%&#39;&quot;</span>
+<span class="co">// (without newlines)</span></code></pre></div>
+<h2 id="retrieving-data">Retrieving data</h2>
+<p>Call <code>SmapFetcher.execute()</code> to retrieve readings from a sMAP server:</p>
+<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java">SmapFetcher fetcher = <span class="fu">SmapFetcher</span>(host, port);
+<span class="bu">Query</span> query = ...
+
+<span class="bu">Map</span>&lt;<span class="bu">String</span>, TimeSeries&gt; results = fetcher.<span class="fu">execute</span>(query);
+<span class="co">// Returns a map UUID -&gt; time series</span></code></pre></div>
+<h2 id="posting-new-data">Posting new data</h2>
+<p>In order to post new data to sMAP, first it is necessary to generate an update payload, and then to post it.</p>
+<p>In the following code, new data is posted to a single stream.</p>
+<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java">Payload payload = <span class="fu">generateUpdatePayload</span>(
+            sourceName,    <span class="co">// String</span>
+            path,          <span class="co">// String</span>
+            readings,      <span class="co">// TimeSeries&lt;Double&gt;</span>
+            metadataOpt,   <span class="co">// Optional&lt;Map&lt;String, Object&gt;&gt;</span>
+            propertiesOpt, <span class="co">// Optional&lt;Map&lt;String, Object&gt;&gt;</span>
+            suppliedUuid); <span class="co">// Optional&lt;UUID&gt;</span>
+
+SmapUpdater updater = <span class="fu">SmapUpdater</span>(host, port, key, dryRun);
+
+<span class="bu">Map</span> map = <span class="kw">new</span> <span class="bu">HashMap</span>();
+map.<span class="fu">put</span>(payload.<span class="fu">path</span>, payload.<span class="fu">object</span>);
+
+JSONObject object = <span class="kw">new</span> <span class="fu">JSONObject</span>(map)
+
+updater.<span class="fu">postData</span>(object);</code></pre></div>
+<p>In the following code, new data is posted to multiple streams.</p>
+<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java"><span class="bu">List</span>&lt;Payload&gt; payloads = ...
+
+SmapUpdater updater = <span class="fu">SmapUpdater</span>(host, port, key, dryRun);
+
+JSONObject cumulativePayload = <span class="kw">new</span> <span class="fu">JSONObject</span>(
+        payloads
+        .<span class="fu">stream</span>()
+        .<span class="fu">collect</span>(Collectors.
+                <span class="fu">toMap</span>(pair -&gt; pair.<span class="fu">path</span>, pair -&gt; pair.<span class="fu">object</span>)));
+
+updater.<span class="fu">postData</span>(cumulativePayload);</code></pre></div>
+<h3 id="auto-generating-uuid">Auto-generating UUID</h3>
+<p>When creating an update payload for a given source name and path, it is possible to supply the corresponding UUID or to automatically generate one. In the latter case, the UUID corresponds to <code>MD5(source_name ++ path)</code>.</p>
+<p><strong>Note</strong>: this functionality is present for legacy reasons, the UUID should always be specified explicitly.</p>
+<h2 id="installation">Installation</h2>
+<p>This library uses Maven and can be installed with the following command.</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="ex">mvn</span> install</code></pre></div>
+<p>EPW files are CSV files with an additional header, therefore, this library used the <a href="https://github.com/sdu-cfei/java-libraries/dataframes/">DataFrames</a> library for managing the raw data.</p>
+<h2 id="documentation">Documentation</h2>
+<p><a href="https://sdu-cfei.github.io/java-libraries/smap-docs/index.html">Javadoc</a></p>
+</body>
+</html>

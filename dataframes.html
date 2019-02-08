@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title></title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+  </style>
+  <link rel="stylesheet" href="style.css">
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<h1 id="dataframes">DataFrames</h1>
+<p>This is a Java library to manage time-series and data-frames, in part inspired to the Python library <a href="https://pandas.pydata.org/">pandas</a>.</p>
+<p><a href="https://github.com/sdu-cfei/java-libraries/dataframes/" class="uri">https://github.com/sdu-cfei/java-libraries/dataframes/</a></p>
+<p>Two main classes are defined, <code>TimeSeries</code> and <code>DataFrames</code>.</p>
+<p>A time-series represent a sequence of pairs (instant, value). The list of instants is also called <em>index</em>. Each time-series has a reading type, which is a subclass of <code>Number</code>. Time-series can, therefore, contain values such as <code>Double</code>, <code>Integer</code> and <code>Long</code>.</p>
+<p>A data-frame is a set of time-series having the same index, identified by a <code>Measure</code>. The time-series contained in a data-frame can have different reading types.</p>
+<h2 id="installation">Installation</h2>
+<p>This library uses Maven and can be installed with the following command.</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="ex">mvn</span> install</code></pre></div>
+<h2 id="documentation">Documentation</h2>
+<p><a href="https://sdu-cfei.github.io/java-libraries/dataframes-docs/index.html">Javadoc</a></p>
+<h2 id="examples">Examples</h2>
+<p>In the following example, a time-series is created from a list of instants and a list of values.</p>
+<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java">Instant[] timestampsArray = {
+    LocalDateTime.<span class="fu">of</span>(<span class="dv">2015</span>, Month.<span class="fu">JANUARY</span>, <span class="dv">5</span>, <span class="dv">12</span>, <span class="dv">55</span>).<span class="fu">toInstant</span>(ZoneOffset.<span class="fu">UTC</span>),
+    LocalDateTime.<span class="fu">of</span>(<span class="dv">2015</span>, Month.<span class="fu">JANUARY</span>, <span class="dv">5</span>, <span class="dv">12</span>, <span class="dv">59</span>).<span class="fu">toInstant</span>(ZoneOffset.<span class="fu">UTC</span>),
+    LocalDateTime.<span class="fu">of</span>(<span class="dv">2015</span>, Month.<span class="fu">JANUARY</span>, <span class="dv">5</span>, <span class="dv">15</span>, <span class="dv">8</span>).<span class="fu">toInstant</span>(ZoneOffset.<span class="fu">UTC</span>),
+    LocalDateTime.<span class="fu">of</span>(<span class="dv">2015</span>, Month.<span class="fu">JANUARY</span>, <span class="dv">5</span>, <span class="dv">15</span>, <span class="dv">28</span>).<span class="fu">toInstant</span>(ZoneOffset.<span class="fu">UTC</span>),
+    LocalDateTime.<span class="fu">of</span>(<span class="dv">2015</span>, Month.<span class="fu">JANUARY</span>, <span class="dv">5</span>, <span class="dv">17</span>, <span class="dv">8</span>).<span class="fu">toInstant</span>(ZoneOffset.<span class="fu">UTC</span>)};
+<span class="bu">Double</span>[] valuesArray = {<span class="fl">24.6</span>, <span class="fl">28.7</span>, <span class="fl">26.3</span>, <span class="fl">13.8</span>, <span class="fl">27.4</span>};
+<span class="bu">ArrayList</span>&lt;Instant&gt; timestamps = <span class="kw">new</span> <span class="bu">ArrayList</span>&lt;&gt;(
+    <span class="bu">Arrays</span>.<span class="fu">asList</span>(timestampsArray));
+<span class="bu">ArrayList</span>&lt;<span class="bu">Double</span>&gt; values = <span class="kw">new</span> <span class="bu">ArrayList</span>&lt;&gt;(
+    <span class="bu">Arrays</span>.<span class="fu">asList</span>(valuesArray));
+
+TimeSeries&lt;<span class="bu">Double</span>&gt; timeSeries = <span class="kw">new</span> TimeSeries&lt;&gt;(
+    timestamps, values, <span class="bu">Double</span>.<span class="fu">class</span>);</code></pre></div>
+<p>In the following example, a CSV file is parsed to generate a data-frame, some elements are modified, and a new CSV file is saved.</p>
+<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java">DataFrame dataFrame = DataFrame.<span class="fu">fromCsv</span>(<span class="kw">new</span> <span class="bu">StringReader</span>(csv),
+        DateTimeFormatter.<span class="fu">ofPattern</span>(<span class="st">&quot;yyyy-MM-dd HH:mm:ss&quot;</span>),
+        ZoneOffset.<span class="fu">UTC</span>);
+
+TimeSeries&lt;<span class="bu">Double</span>&gt; timeSeries = ...
+Measure measure = <span class="kw">new</span> <span class="fu">Measure</span>(<span class="st">&quot;fieldName&quot;</span>, <span class="bu">Double</span>.<span class="fu">class</span>);
+dataFrame.<span class="fu">set</span>(measure, timeSeries, <span class="kw">false</span>);
+
+<span class="bu">String</span> modified = dataFrame.<span class="fu">toCsv</span>();</code></pre></div>
+</body>
+</html>

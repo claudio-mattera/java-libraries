@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="generator" content="pandoc">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title></title>
+  <style type="text/css">code{white-space: pre;}</style>
+  <style type="text/css">
+div.sourceCode { overflow-x: auto; }
+table.sourceCode, tr.sourceCode, td.lineNumbers, td.sourceCode {
+  margin: 0; padding: 0; vertical-align: baseline; border: none; }
+table.sourceCode { width: 100%; line-height: 100%; }
+td.lineNumbers { text-align: right; padding-right: 4px; padding-left: 4px; color: #aaaaaa; border-right: 1px solid #aaaaaa; }
+td.sourceCode { padding-left: 5px; }
+code > span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code > span.dt { color: #902000; } /* DataType */
+code > span.dv { color: #40a070; } /* DecVal */
+code > span.bn { color: #40a070; } /* BaseN */
+code > span.fl { color: #40a070; } /* Float */
+code > span.ch { color: #4070a0; } /* Char */
+code > span.st { color: #4070a0; } /* String */
+code > span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code > span.ot { color: #007020; } /* Other */
+code > span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code > span.fu { color: #06287e; } /* Function */
+code > span.er { color: #ff0000; font-weight: bold; } /* Error */
+code > span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+code > span.cn { color: #880000; } /* Constant */
+code > span.sc { color: #4070a0; } /* SpecialChar */
+code > span.vs { color: #4070a0; } /* VerbatimString */
+code > span.ss { color: #bb6688; } /* SpecialString */
+code > span.im { } /* Import */
+code > span.va { color: #19177c; } /* Variable */
+code > span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code > span.op { color: #666666; } /* Operator */
+code > span.bu { } /* BuiltIn */
+code > span.ex { } /* Extension */
+code > span.pp { color: #bc7a00; } /* Preprocessor */
+code > span.at { color: #7d9029; } /* Attribute */
+code > span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code > span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code > span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code > span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+  </style>
+  <link rel="stylesheet" href="style.css">
+  <!--[if lt IE 9]>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/html5shiv/3.7.3/html5shiv-printshiv.min.js"></script>
+  <![endif]-->
+</head>
+<body>
+<h1 id="dataframes">DataFrames</h1>
+<p>This is a Java library to read and write <a href="https://energyplus.net/">EnergyPlus</a> weather (EPW) files.</p>
+<p><a href="https://github.com/sdu-cfei/java-libraries/epwformat/" class="uri">https://github.com/sdu-cfei/java-libraries/epwformat/</a></p>
+<h2 id="installation">Installation</h2>
+<p>This library uses Maven and can be installed with the following command.</p>
+<div class="sourceCode"><pre class="sourceCode bash"><code class="sourceCode bash"><span class="ex">mvn</span> install</code></pre></div>
+<p>EPW files are CSV files with an additional header, therefore, this library used the <a href="https://github.com/sdu-cfei/java-libraries/dataframes/">DataFrames</a> library for managing the raw data.</p>
+<h2 id="documentation">Documentation</h2>
+<p><a href="https://sdu-cfei.github.io/java-libraries/epwformat-docs/index.html">Javadoc</a></p>
+<h2 id="examples">Examples</h2>
+<p>In the following example, the <code>dryBulbTemp</code> column of the EPW file is partially replaced with new readings.</p>
+<div class="sourceCode"><pre class="sourceCode java"><code class="sourceCode java"><span class="bu">String</span> rawEpwContent = ...
+
+EpwParser parser = <span class="kw">new</span> <span class="fu">EpwParser</span>(year, timeZone);
+Epw weather = parser.<span class="fu">parse</span>(rawEpwContent);
+
+<span class="bu">String</span> field = <span class="st">&quot;dryBulbTemp&quot;</span>;
+TimeSeries&lt;<span class="bu">Double</span>&gt; timeSeries = ...; <span class="co">// Must be a proper subset of the original</span>
+
+weather.<span class="fu">modifyDataframe</span>(dataFrame -&gt; {
+    <span class="kw">if</span> (Epw.<span class="fu">getDatatypeForField</span>(field).<span class="fu">equals</span>(<span class="bu">Integer</span>.<span class="fu">class</span>)) {
+        <span class="co">// Casting time-series to integer</span>
+        TimeSeries&lt;<span class="bu">Integer</span>&gt; integerTimeSeries = timeSeries.<span class="fu">toInteger</span>();
+        Measure measure = <span class="kw">new</span> <span class="fu">Measure</span>(field, <span class="bu">Integer</span>.<span class="fu">class</span>);
+        dataFrame.<span class="fu">setContiguous</span>(measure, integerTimeSeries);
+    } <span class="kw">else</span> {
+        <span class="dt">final</span> Measure measure = <span class="kw">new</span> <span class="fu">Measure</span>(field, <span class="bu">Double</span>.<span class="fu">class</span>);
+        dataFrame.<span class="fu">setContiguous</span>(measure, timeSeries);
+    }
+});
+
+<span class="bu">String</span> newRawEpwContent = weather.<span class="fu">export</span>();</code></pre></div>
+</body>
+</html>
