@@ -3,6 +3,8 @@ DataFrames
 
 This is a Java library to manage time-series and data-frames, in part inspired to the Python library [pandas].
 
+The library is released under the [MIT License](https://opensource.org/licenses/MIT)
+
 <https://github.com/sdu-cfei/java-libraries/dataframes/>
 
 Two main classes are defined, `TimeSeries` and `DataFrames`.

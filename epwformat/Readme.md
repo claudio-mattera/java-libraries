@@ -3,6 +3,8 @@ DataFrames
 
 This is a Java library to read and write [EnergyPlus] weather (EPW) files.
 
+The library is released under the [MIT License](https://opensource.org/licenses/MIT)
+
 <https://github.com/sdu-cfei/java-libraries/epwformat/>
 
 

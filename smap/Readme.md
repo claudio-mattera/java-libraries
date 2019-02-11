@@ -3,6 +3,8 @@ sMAP for Java
 
 This is a Java library to access data on an [sMAP] server. Check the Javadoc and tests for more examples.
 
+The library is released under the [MIT License](https://opensource.org/licenses/MIT)
+
 <https://github.com/sdu-cfei/java-libraries/smap/>
 
 
